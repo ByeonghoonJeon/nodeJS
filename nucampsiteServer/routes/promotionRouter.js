@@ -1,6 +1,6 @@
 const express = require("express");
 const promotionRouter = express.Router();
-
+const authenticate = require("../authenticate");
 const Promotion = require("../models/promotion");
 
 promotionRouter
