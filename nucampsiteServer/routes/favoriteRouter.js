@@ -1,45 +1,42 @@
 const express = require("express");
-const promotionRouter = express.Router();
 const authenticate = require("../authenticate");
-const Promotion = require("../models/promotion");
 const cors = require("./cors");
-
-promotionRouter
+const Favorite = require("../models/favorite");
+favoriteRouter
   .route("/")
   .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
   .get(cors.cors, (req, res, next) => {
-    Promotion.find()
-      .then((promotions) => {
+    Campsite.find()
+      .populate("comments.author")
+      .then((campsites) => {
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
-        res.json(promotions);
+        res.json(campsites);
       })
       .catch((err) => next(err));
   })
-
   .post(
     cors.corsWithOptions,
     authenticate.verifyUser,
     authenticate.verifyAdmin,
     (req, res, next) => {
-      Promotion.create(req.body)
-        .then((promotion) => {
-          console.log("Promotion Created ", promotion);
+      Campsite.create(req.body)
+        .then((campsite) => {
+          console.log("Campsite Created ", campsite);
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
-          res.json(promotion);
+          res.json(campsite);
         })
         .catch((err) => next(err));
     }
   )
-
   .put(
     cors.corsWithOptions,
     authenticate.verifyUser,
     authenticate.verifyAdmin,
     (req, res) => {
       res.statusCode = 403;
-      res.end("PUT operation not supported on /promotions");
+      res.end("PUT operation not supported on /campsites");
     }
   )
   .delete(
@@ -47,7 +44,7 @@ promotionRouter
     authenticate.verifyUser,
     authenticate.verifyAdmin,
     (req, res, next) => {
-      Promotion.deleteMany()
+      Campsite.deleteMany()
         .then((response) => {
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
@@ -57,15 +54,16 @@ promotionRouter
     }
   );
 
-promotionRouter
-  .route("/:promotionId")
+favoriteRouter
+  .route("/:campsiteId")
   .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
   .get(cors.cors, (req, res, next) => {
-    Promotion.findById(req.params.promotionId)
-      .then((promotion) => {
+    Campsite.find()
+      .populate("comments.author")
+      .then((campsites) => {
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
-        res.json(promotion);
+        res.json(campsites);
       })
       .catch((err) => next(err));
   })
@@ -73,31 +71,24 @@ promotionRouter
     cors.corsWithOptions,
     authenticate.verifyUser,
     authenticate.verifyAdmin,
-    (req, res) => {
-      res.statusCode = 403;
-      res.end(
-        `POST operation not supported on /promotions/${req.params.promotionId}`
-      );
+    (req, res, next) => {
+      Campsite.create(req.body)
+        .then((campsite) => {
+          console.log("Campsite Created ", campsite);
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(campsite);
+        })
+        .catch((err) => next(err));
     }
   )
   .put(
     cors.corsWithOptions,
     authenticate.verifyUser,
     authenticate.verifyAdmin,
-    (req, res, next) => {
-      Promotion.findByIdAndUpdate(
-        req.params.promotionId,
-        {
-          $set: req.body,
-        },
-        { new: true }
-      )
-        .then((promotion) => {
-          res.statusCode = 200;
-          res.setHeader("Content-Type", "application/json");
-          res.json(promotion);
-        })
-        .catch((err) => next(err));
+    (req, res) => {
+      res.statusCode = 403;
+      res.end("PUT operation not supported on /campsites");
     }
   )
   .delete(
@@ -105,7 +96,7 @@ promotionRouter
     authenticate.verifyUser,
     authenticate.verifyAdmin,
     (req, res, next) => {
-      Promotion.findByIdAndDelete(req.params.promotionId)
+      Campsite.deleteMany()
         .then((response) => {
           res.statusCode = 200;
           res.setHeader("Content-Type", "application/json");
@@ -115,4 +106,4 @@ promotionRouter
     }
   );
 
-module.exports = promotionRouter;
+module.exports = favoriteRouter;

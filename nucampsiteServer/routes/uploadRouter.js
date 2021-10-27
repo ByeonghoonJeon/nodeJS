@@ -20,6 +20,7 @@ const imageFileFilter = (req, file, cb) => {
 
 const upload = multer({ storage: storage, fileFilter: imageFileFilter });
 
+const cors = require("./cors");
 const uploadRouter = express.Router();
 
 uploadRouter
