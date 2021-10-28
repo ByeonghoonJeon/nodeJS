@@ -13,6 +13,7 @@ const promotionRouter = require("./routes/promotionRouter");
 const partnerRouter = require("./routes/partnerRouter");
 
 const uploadRouter = require("./routes/uploadRouter");
+const favoriteRouter = require("./routes/favoriteRouter");
 
 const app = express();
 app.all("*", (req, res, next) => {
@@ -65,6 +66,7 @@ app.use("/campsites", campsiteRouter);
 app.use("/promotions", promotionRouter);
 app.use("/partners", partnerRouter);
 app.use("/imageUpload", uploadRouter);
+app.use("/favorites", favoriteRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
